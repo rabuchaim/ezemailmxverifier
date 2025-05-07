@@ -1,2 +1,2 @@
-# ezemailmxvalidator
-A complete and lightweight validator of email addresses, domains and MX servers. It allows you to choose the DNS server to be used, timeout, max retries, etc and all Pure Python! no dependencies on DNS libraries, it uses only the socket, struct and re native libraries
+# ezemailmxverifier
+EzEmailMXVerifier is a fast and pure Python lib to validate email addresses. It checks syntax, domain, TLD, MX and resolves IPs. It uses its own cache, has a built-in DNS client (with configurable fallback, timeout and retries), details failures (translatable) and has extra functions. No external dependencies, it's pure Python!
