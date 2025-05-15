@@ -125,6 +125,145 @@ For most uses, you do not need to change any class parameters.
 
 ## 📑 Usage Example
 
+```python
+>>> from ezemailmxverifier import EzEmailMXVerifier
+>>> email_validator = EzEmailMXVerifier(debug=True)
+DEBUG: Public Suffix List auto-update started... the current file /opt/git-ezemailmxverifier/ezemailmxverifier/public_suffix_list.dat.gz is older than 3 day(s)
+DEBUG: Downloading public suffix list from: https://publicsuffix.org/list/public_suffix_list.dat
+DEBUG: Public suffix list (as text) saved to: /tmp/public_suffix_list.dat [0.08052 seconds]
+DEBUG: Public suffix list (as json) saved to: /tmp/public_suffix_list.dat.json
+DEBUG: Public suffix list (pickled) saved to: /opt/git-ezemailmxverifier/ezemailmxverifier/public_suffix_list.dat.gz
+DEBUG: Public suffix list loaded from: /opt/git-ezemailmxverifier/ezemailmxverifier/public_suffix_list.dat.gz [0.180318473]
+DEBUG: Current MX ignore list: ['0.0.0.0', '~', 'localhost']
+DEBUG: Primary DNS server: 8.8.8.8
+DEBUG: Fallback DNS server: 1.1.1.1
+DEBUG: Running background thread to monitor the application cache...
+DEBUG: MX CACHE: {'hits': 0, 'misses': 0, 'items': 0, 'size_in_kb': 0.06} (saved to /tmp/EzEmailMXVerifier-mx_cache.json)
+DEBUG: RESOLVER CACHE: {'hits': 0, 'misses': 0, 'items': 0, 'size_in_kb': 0.06} (saved to /tmp/EzEmailMXVerifier-resolver_cache.json)
+DEBUG: SOA DOMAIN CACHE: {'hits': 0, 'misses': 0, 'items': 0, 'size_in_kb': 0.06} (saved to /tmp/EzEmailMXVerifier-soa_domain_cache.json)
+DEBUG: STATISTICS: (saved to /tmp/EzEmailMXVerifier-statistics.json)
+>>> response = email_validator("ricardoabuchaim@gmail.com")
+DEBUG: Verifying email: ricardoabuchaim@gmail.com
+DEBUG: Verifying domain sintax: gmail.com
+DEBUG: Hostname alt1.gmail-smtp-in.l.google.com resolved to ['64.233.184.26'] for domain gmail.com [0.116362952]
+DEBUG: >>> Added to resolver cache the IPs for hostname alt1.gmail-smtp-in.l.google.com [0.000028937]
+DEBUG: Hostname alt2.gmail-smtp-in.l.google.com resolved to ['142.250.27.27'] for domain gmail.com [0.052559158]
+DEBUG: >>> Added to resolver cache the IPs for hostname alt2.gmail-smtp-in.l.google.com [0.000020987]
+DEBUG: Hostname gmail-smtp-in.l.google.com resolved to ['142.251.0.26'] for domain gmail.com [0.053743933]
+DEBUG: >>> Added to resolver cache the IPs for hostname gmail-smtp-in.l.google.com [0.000015643]
+DEBUG: Hostname alt3.gmail-smtp-in.l.google.com resolved to ['142.250.153.27'] for domain gmail.com [0.054770165]
+DEBUG: >>> Added to resolver cache the IPs for hostname alt3.gmail-smtp-in.l.google.com [0.000015655]
+DEBUG: Hostname alt4.gmail-smtp-in.l.google.com resolved to ['142.251.9.26'] for domain gmail.com [0.114805060]
+DEBUG: >>> Added to resolver cache the IPs for hostname alt4.gmail-smtp-in.l.google.com [0.000017332]
+DEBUG: >>> Added to cache MX records for domain gmail.com [0.000011143]
+>>> print(response)
+(True, 'Valid Email sintax with valid MX records for domain gmail.com', [('alt4.gmail-smtp-in.l.google.com', 40, ['142.251.9.26']), ('alt2.gmail-smtp-in.l.google.com', 20, ['142.250.27.26']), ('alt3.gmail-smtp-in.l.google.com', 30, ['142.250.153.26']), ('alt1.gmail-smtp-in.l.google.com', 10, ['64.233.184.26']), ('gmail-smtp-in.l.google.com', 5, ['142.251.0.26'])])
+>>> result, error_message, mx_servers = email_validator("ricardoabuchaim@gmail.com")
+DEBUG: Verifying email: ricardoabuchaim@gmail.com
+DEBUG: Verifying domain sintax: gmail.com
+DEBUG: >>> Found in cache MX servers for domain gmail.com [0.000008887]: [('gmail-smtp-in.l.google.com', 5, ['142.251.0.26']), ('alt3.gmail-smtp-in.l.google.com', 30, ['142.250.153.26']), ('alt1.gmail-smtp-in.l.google.com', 10, ['64.233.184.26']), ('alt4.gmail-smtp-in.l.google.com', 40, ['142.251.9.26']), ('alt2.gmail-smtp-in.l.google.com', 20, ['142.250.27.27'])]
+>>> print(result)
+True
+>>> print(error_message)
+Valid Email sintax with valid MX records for domain gmail.com
+>>> print(mx_servers)
+[('gmail-smtp-in.l.google.com', 5, ['142.251.0.26']), ('alt3.gmail-smtp-in.l.google.com', 30, ['142.250.153.26']), ('alt1.gmail-smtp-in.l.google.com', 10, ['64.233.184.26']), ('alt4.gmail-smtp-in.l.google.com', 40, ['142.251.9.26']), ('alt2.gmail-smtp-in.l.google.com', 20, ['142.250.27.27'])]
+>>> email_validator._mx_cache.cache_info()
+CacheInfo(hits=1, misses=1, items=1, size_in_kb=0.17)
+```
+> The value of mx_servers is a list of tuples with (mx_hostname,priority,ips)
+
+Using `debug=True` will have the cache and statistics files saved in the `/tmp/` directory (`debug_save_dir`):
+
+```bash
+$ ll /tmp/EzEmailMXVerifier-*
+4 -rw-r--r-- 1 root root 897 May 15 09:23 /tmp/EzEmailMXVerifier-mx_cache.json
+4 -rw-r--r-- 1 root root 705 May 15 09:23 /tmp/EzEmailMXVerifier-resolver_cache.json
+4 -rw-r--r-- 1 root root   2 May 15 09:23 /tmp/EzEmailMXVerifier-soa_domain_cache.json
+4 -rw-r--r-- 1 root root 322 May 15 09:23 /tmp/EzEmailMXVerifier-statistics.json
+
+$ cat /tmp/EzEmailMXVerifier-statistics.json
+{
+   "mx_cache": {
+      "hits": 0,
+      "misses": 1,
+      "items": 1,
+      "size_in_kb": 0.17
+   },
+   "resolver_cache": {
+      "hits": 0,
+      "misses": 4,
+      "items": 5,
+      "size_in_kb": 0.17
+   },
+   "soa_domain_cache": {
+      "hits": 0,
+      "misses": 0,
+      "items": 0,
+      "size_in_kb": 0.06
+   }
+}
+```
+Now some examples with errors:
+
+```python
+>>> from ezemailmxverifier import EzEmailMXVerifier
+>>> email_validator = EzEmailMXVerifier(debug=False,return_boolean=True)
+>>> email_validator.verify_email_sintax('ricardoabuchaim@gmail.com')
+True
+>>> email_validator.verify_email_sintax('ricardo abuchaim@gmail.com')
+False
+>>> email_validator.verify_email_sintax('ricardo abuchaim@gmail.com',return_boolean=False)
+(False, 'Invalid email syntax (contains spaces)')
+>>> email_validator.verify_email_sintax('ricardo,abuchaim@gmail.com',return_boolean=False)
+(False, 'Invalid email syntax (contains ",")')
+>>> email_validator.verify_email_sintax('ricardoabuchaim+aws@gmail.com',return_boolean=False)
+(True, 'Valid email sintax')
+
+>>> email_validator.verify_domain_sintax('ricardoabuchaim@gmail.com',return_boolean=False)
+(False, 'Invalid domain syntax (contains "@")')
+>>> email_validator.verify_domain_sintax('gmail.com',return_boolean=False)
+(True, 'Valid domain')
+>>> email_validator.verify_domain_sintax('gmailblablabla.com',return_boolean=False)
+(True, 'Valid domain')
+>>> email_validator.verify_domain('gmail.comblablabla',return_boolean=False)
+(False, 'Invalid top-level domain', {})
+>>> email_validator.verify_domain('gmailblablabla.com',return_boolean=False)
+(False, 'Domain name gmailblablabla.com does not exist (NXDOMAIN)', {})
+>>> email_validator.verify_domain('gmail.com',return_boolean=False)
+(True, 'Valid domain', {'name': 'gmail.com', 'mname': 'ns1.google.com', 'rname': 'dns-admin.google.com', 'serial': 757680631, 'refresh': 900, 'retry': 900, 'expire': 1800, 'minimum': 60, 'error_message': ''})
+
+>>> email_validator.verify_domain_sintax('gmail.com.br',return_boolean=False)
+(True, 'Valid domain')
+>>> email_validator.verify_domain('gmail.com.br',return_boolean=False)
+(True, 'Valid domain', {'name': 'gmail.com.br', 'mname': 'ns1.google.com', 'rname': 'dns-admin.google.com', 'serial': 757680631, 'refresh': 900, 'retry': 900, 'expire': 1800, 'minimum': 60, 'error_message': ''})
+>>> email_validator.verify_email('ricardoabuchaim@gmail.com.br',return_boolean=False)
+(False, 'Valid Email sintax but no MX records found for domain gmail.com.br', [])
+
+>>> email_validator.verify_email('ricardoabuchaim@uol.com.br',return_boolean=False)
+(True, 'Valid Email sintax with valid MX records for domain uol.com.br', [('mx.uol.com.br', 10, ['200.147.41.231'])])
+
+>>> email_validator = EzEmailMXVerifier(debug=True,timeout=0.5)
+>>> email_validator.verify_email('support@suspension.com.au',return_boolean=False)
+DEBUG: Verifying email: support@suspension.com.au
+DEBUG: Verifying domain sintax: suspension.com.au
+DEBUG: Using fallback DNS server 1.1.1.1 for MX records of domain suspension.com.au
+DEBUG: Retry 1/2 for email support@suspension.com.au...
+DEBUG: Using fallback DNS server 1.1.1.1 for MX records of domain suspension.com.au
+DEBUG: Retry 2/2 for email support@suspension.com.au...
+DEBUG: Using fallback DNS server 1.1.1.1 for MX records of domain suspension.com.au
+(False, 'Timeout (1.5 seconds)', [])
+
+>>> email_validator = EzEmailMXVerifier(debug=True,timeout=1.0)
+>>> email_validator.verify_email('profundities@recycling.com.au',return_boolean=False)
+DEBUG: Verifying email: profundities@recycling.com.au
+DEBUG: Verifying domain sintax: recycling.com.au
+DEBUG: Using fallback DNS server 1.1.1.1 for MX records of domain recycling.com.au
+DEBUG: Retry 1/2 for email profundities@recycling.com.au...
+DEBUG: Using fallback DNS server 1.1.1.1 for MX records of domain recycling.com.au
+(False, 'No reachable authority (SERVFAIL) for recycling.com.au', [])
+```
+> Note: **If you set a timeout of 0.5 seconds, on the first attempt with the main DNS server, the timeout will be 0.5 seconds, but when the fallback server is used, the timeout will be double, that is, 1 second. On each attempt, the main DNS server will receive the configured timeout, and if the fallback server is used, the timeout will be double. So we can say that if the configured timeout is 1 second, and you set `timeout_max_retries` to 2, if everything occurs in timeout, the verification will take 9 seconds. 6 attempts will be made, 3 of them with a 1-second timeout and 3 of them with a 2-second timeout each.**
 ---
 
 ## 📑 Translating all messages
@@ -170,6 +309,13 @@ def update_error_strings(self,error_strings:dict)->None:
     for error_code, error_string in error_strings.items():
         self.error_strings[error_code] = error_string
 ```
+---
+## 🛠️ Support
+
+If you receive a parse response error, please open an issue with us, informing us of the domain, the error message and, if possible, the result of the dig command on that domain. Some domains are misconfigured on their authoritative DNS server, and since the EzEmailMXVerifier class has its own DNS client, it is possible that a configuration error has not yet been mapped and you are receiving this error. 
+
+But don't worry, if it is configured correctly, our client can identify it, the problem will only occur if there is a configuration problem at the origin of the domain and certainly does not have a valid MX.
+
 ---
 
 ## 🌐 Links
